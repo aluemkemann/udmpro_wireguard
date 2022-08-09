@@ -5,19 +5,14 @@ Getestet mit UDM Pro mit UniFi OS UDM Pro 1.12.22
 Die UDM Pro SE kann hiermit _nicht_ ohne Anpassung eingerichtet werden, hierfür werde ich noch eine extra Anleitung erstellen
 Befehle Zeile für Zeile per SSH auf der UDM Pro pasten
 
-## [Boostchicken](https://github.com/unifi-utilities/unifios-utilities/blob/main/on-boot-script/README.md) is a utility that enables permanent changes to the Unifi Operating System
-
+## [Boostchicken](https://github.com/unifi-utilities/unifios-utilities/blob/main/on-boot-script/README.md) installieren. Das ist ein Utility welches persistente Änderungen am UnifiOS erlaubt
 ```
 unifi-os shell
 curl -L https://udm-boot.boostchicken.dev -o udm-boot.deb
 dpkg -i udm-boot.deb
 exit
 ```
-
-```
-alias ll='ls -la --color=auto'
-```
-
+## Wireguard Kernel Modul installieren und Autostart Script anpassen
 ```
 curl -LJo wireguard-kmod.tar.Z  https://github.com/tusc/wireguard-kmod/releases/download/v06-01-22/wireguard-kmod-06-01-22.tar.Z
 tar -C /mnt/data -xvzf wireguard-kmod.tar.Z
@@ -27,7 +22,7 @@ grep "^LOAD_BUILTIN" /mnt/data/wireguard/setup_wireguard.sh
 /mnt/data/wireguard/setup_wireguard.sh
 dmesg | grep wireguard
 ```
-
+## Wireguard Autostart Script aktivieren
 ```
 cp /mnt/data/wireguard/setup_wireguard.sh /mnt/data/on_boot.d/
 echo "wg-quick up wg0" >> /mnt/data/on_boot.d/setup_wireguard.sh
