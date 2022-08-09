@@ -3,7 +3,9 @@ How to install and use Wireguard VPN on the Ubiquiti Dream Machine Pro
 
 Getestet mit UDM Pro mit UniFi OS UDM Pro 1.12.22
 Die UDM Pro SE kann hiermit _nicht_ ohne Anpassung eingerichtet werden, hierfür werde ich noch eine extra Anleitung erstellen
-Befehle Zeile für Zeiler per SSH auf der UDM Pro copy und pasten
+Befehle Zeile für Zeile per SSH auf der UDM Pro pasten
+
+## [Boostchicken](https://github.com/unifi-utilities/unifios-utilities/blob/main/on-boot-script/README.md) is a utility that enables permanent changes to the Unifi Operating System
 
 ```
 unifi-os shell
@@ -31,18 +33,20 @@ cp /mnt/data/wireguard/setup_wireguard.sh /mnt/data/on_boot.d/
 echo "wg-quick up wg0" >> /mnt/data/on_boot.d/setup_wireguard.sh
 ```
 
+## Wireguard Public und Private Key erstellen
 ```
 cd /etc/wireguard
 wg genkey | tee privatekey.wg0 | wg pubkey > publickey.wg0
 ```
-
-# Den folgenden Block bis zur Zeile mit dem einzelnen EOF kopieren und pasten!
+## erstellen der Wireguard Server Konfiguration per "here-document"
+### Den folgenden Block bitte komplett kopieren und einfügen
+### Achtung, falls bereits eine Konfiguration vorhanden ist, wird diese ohne Nachfrage überschrieben
 ```
-cat << EOF > wg0.conf
+cat << EOF > /etc/wireguard/wg0.conf
 [Interface]
 Address = 10.9.8.1/24
-PrivateKey = priv.priv.priv.priv
 ListenPort = 1820
+PrivateKey = priv.priv.priv.priv
 PostUp   = iptables -A FORWARD -i %i -j ACCEPT; iptables -A FORWARD -o %i -j ACCEPT; iptables ! -o lo -t nat -A POSTROUTING -j MASQUERADE; iptables -A FORWARD -i br0 -m state --state RELATED,ESTABLISHED -j ACCEPT
 PostDown = iptables -D FORWARD -i %i -j ACCEPT; iptables -D FORWARD -o %i -j ACCEPT; iptables ! -o lo -t nat -D POSTROUTING -j MASQUERADE; iptables -D FORWARD -i br0 -m state --state RELATED,ESTABLISHED -j ACCEPT
 
@@ -51,8 +55,8 @@ PublicKey =
 AllowedIPs = 10.9.8.2/32
 EOF
 ```
-
+## Ersetzen des Platzhalters "priv.priv.priv.priv" mittels "awk" durch den eben generierten privaten Schlüssel
 ```
-awk 'BEGIN{getline l < "privatekey.wg0"}/priv\.priv\.priv\.priv/{gsub("priv\.priv\.priv\.priv",l)}1' wg0.conf
+awk 'BEGIN{getline l < "/etc/wireguard/privatekey.wg0"}/priv\.priv\.priv\.priv/{gsub("priv\.priv\.priv\.priv",l)}1' /etc/wireguard/wg0.conf
 ```
 
