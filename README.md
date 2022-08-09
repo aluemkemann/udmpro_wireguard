@@ -31,11 +31,11 @@ echo "wg-quick up wg0" >> /mnt/data/on_boot.d/setup_wireguard.sh
 ## Wireguard Public und Private Key erstellen
 ```
 cd /etc/wireguard
-wg genkey | tee privatekey.wg0 | wg pubkey > publickey.wg0
+wg genkey | tee /etc/wireguard/privatekey.wg0 | wg pubkey > /etc/wireguard/publickey.wg0
 ```
 ## erstellen der Wireguard Server Konfiguration per "here-document"
-### Den folgenden Block bitte komplett kopieren und einfügen
-### Achtung, falls bereits eine Konfiguration vorhanden ist, wird diese ohne Nachfrage überschrieben
+Achtung, falls bereits eine Konfiguration vorhanden ist, wird diese ohne Nachfrage überschrieben
+Den folgenden Block bitte komplett kopieren und einfügen
 ```
 cat << EOF > /etc/wireguard/wg0.conf
 [Interface]
@@ -54,4 +54,6 @@ EOF
 ```
 awk 'BEGIN{getline l < "/etc/wireguard/privatekey.wg0"}/priv\.priv\.priv\.priv/{gsub("priv\.priv\.priv\.priv",l)}1' /etc/wireguard/wg0.conf
 ```
-
+## sichere Dateirechte für die Wireguard Konfiguration und die private Schlüsseldatei setzen
+```
+chmod 600 /etc/wireguard/{privatekey.wg0,wg0.conf}
