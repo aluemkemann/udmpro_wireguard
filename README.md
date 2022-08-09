@@ -1,9 +1,9 @@
 # udmpro_wireguard
 How to install and use Wireguard VPN on the Ubiquiti Dream Machine Pro
 
-## Getestet mit UDM Pro mit UniFi OS UDM Pro 1.12.22 ##
-## Die UDM Pro SE kann hiermit _nicht_ eingerichtet werden!!! ## 
-## Befehle Zeile für Zeiler per SSH auf der UDM Pro copy und pasten ##
+Getestet mit UDM Pro mit UniFi OS UDM Pro 1.12.22
+Die UDM Pro SE kann hiermit _nicht_ ohne Anpassung eingerichtet werden, hierfür werde ich noch eine extra Anleitung erstellen
+Befehle Zeile für Zeiler per SSH auf der UDM Pro copy und pasten
 
 ```
 unifi-os shell
